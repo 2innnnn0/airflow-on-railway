@@ -1,3 +1,4 @@
 # Example provider pins (uncomment + adjust as needed)
 # apache-airflow-providers-postgres==5.12.1
 # apache-airflow-providers-google==10.16.0
+apache-airflow-providers-fab
