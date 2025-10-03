@@ -4,8 +4,6 @@ USER root
 RUN mkdir -p /opt/airflow/dags /opt/airflow/logs /opt/airflow/plugins
 COPY dags/ /opt/airflow/dags/
 COPY bootstrap.sh /entrypoint-bootstrap.sh
-RUN chmod 755 /entrypoint-bootstrap.sh && chown -R airflow: /opt/airflow /entrypoint-bootstrap.sh
-
-USER airflow
-ENV AIRFLOW_HOME=/opt/airflow
+RUN chmod 755 /entrypoint-bootstrap.sh
+# entrypoint는 root로 시작해 권한 정리 후 gosu로 떨어뜨림
 ENTRYPOINT ["/bin/bash", "/entrypoint-bootstrap.sh"]

@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Ensure DB URL exists
 : "${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN:?AIRFLOW__DATABASE__SQL_ALCHEMY_CONN is required}"
 
-# Initialize / migrate db
-airflow db migrate
+# 볼륨 권한 정리
+export AIRFLOW_HOME="${AIRFLOW_HOME:-/opt/airflow}"
+LOG_DIR="${AIRFLOW_HOME}/logs"
+mkdir -p "${LOG_DIR}"
+chown -R airflow: "${LOG_DIR}"
 
-# Create admin user if not exists
-if ! airflow users list | grep -q "${AIRFLOW_ADMIN_USER:-admin}"; then
-  airflow users create \
+# Airflow 작업은 airflow 사용자로 실행
+gosu airflow airflow db migrate
+
+if ! gosu airflow airflow users list | grep -q "${AIRFLOW_ADMIN_USER:-admin}"; then
+  gosu airflow airflow users create \
     --role Admin \
     --username "${AIRFLOW_ADMIN_USER:-admin}" \
     --password "${AIRFLOW_ADMIN_PASSWORD:-admin}" \
@@ -17,8 +21,6 @@ if ! airflow users list | grep -q "${AIRFLOW_ADMIN_USER:-admin}"; then
     --firstname Admin --lastname User
 fi
 
-# Start scheduler in background
-airflow scheduler &
+gosu airflow airflow scheduler &
 
-# Start webserver on Railway's expected PORT
-exec airflow webserver --port "${PORT:-8080}" --hostname 0.0.0.0
+exec gosu airflow airflow webserver --port "${PORT:-8080}" --hostname 0.0.0.0
