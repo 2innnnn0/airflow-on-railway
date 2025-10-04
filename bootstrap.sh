@@ -20,11 +20,12 @@ chown -R airflow:0 "$LOG_DIR"
 echo "Initializing Airflow database..."
 gosu airflow airflow db migrate
 
-# Create admin user if it doesn't exist
+# Create admin user if it doesn't exist (using FAB CLI in Airflow 3.1+)
 echo "Checking for admin user..."
-if ! gosu airflow airflow users list | grep -q "$AIRFLOW_ADMIN_USER"; then
+if ! gosu airflow airflow db-manager list-users --auth-manager-type fab | grep -q "$AIRFLOW_ADMIN_USER"; then
   echo "Creating admin user: $AIRFLOW_ADMIN_USER"
-  gosu airflow airflow users create \
+  gosu airflow airflow db-manager create-user \
+    --auth-manager-type fab \
     --role Admin \
     --username "$AIRFLOW_ADMIN_USER" \
     --password "$AIRFLOW_ADMIN_PASSWORD" \
