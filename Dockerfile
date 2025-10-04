@@ -1,18 +1,27 @@
 FROM apache/airflow:3.1.0-python3.13
 
 USER root
-RUN apt-get update && apt-get install -y --no-install-recommends util-linux \
- && rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /opt/airflow/dags /opt/airflow/logs /opt/airflow/plugins
 
-# --- pip 는 airflow 사용자로 ---
+# Install gosu for better privilege management
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gosu \
+    && rm -rf /var/lib/apt/lists/* \
+    && gosu nobody true
+
+# Create necessary directories with proper ownership
+RUN mkdir -p /opt/airflow/dags /opt/airflow/logs /opt/airflow/plugins \
+    && chown -R airflow:0 /opt/airflow
+
+# Install Python dependencies as airflow user
 COPY requirements.txt /requirements.txt
 USER airflow
 RUN pip install --no-cache-dir -r /requirements.txt
-# --- 이후 루트로 돌아와 나머지 작업 ---
-USER root
 
+# Copy DAGs and bootstrap script
+USER root
 COPY dags/ /opt/airflow/dags/
 COPY bootstrap.sh /entrypoint-bootstrap.sh
-RUN chmod 755 /entrypoint-bootstrap.sh
+RUN chmod 755 /entrypoint-bootstrap.sh \
+    && chown -R airflow:0 /opt/airflow/dags
+
 ENTRYPOINT ["/bin/bash", "/entrypoint-bootstrap.sh"]

@@ -1,4 +1,10 @@
-# Example provider pins (uncomment + adjust as needed)
-# apache-airflow-providers-postgres==5.12.1
-# apache-airflow-providers-google==10.16.0
+# Airflow 3.1 requires FAB auth provider
 apache-airflow-providers-fab
+
+# PostgreSQL provider (required for Railway PostgreSQL)
+apache-airflow-providers-postgres
+
+# Additional useful providers (uncomment as needed)
+# apache-airflow-providers-google
+# apache-airflow-providers-amazon
+# apache-airflow-providers-http

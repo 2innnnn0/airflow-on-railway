@@ -1,22 +1,44 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
+# Check required environment variables
 : "${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN:?AIRFLOW__DATABASE__SQL_ALCHEMY_CONN is required}"
 
+# Set defaults
 AIRFLOW_HOME="${AIRFLOW_HOME:-/opt/airflow}"
 LOG_DIR="${AIRFLOW_HOME}/logs"
+PORT="${PORT:-8080}"
+AIRFLOW_ADMIN_USER="${AIRFLOW_ADMIN_USER:-admin}"
+AIRFLOW_ADMIN_PASSWORD="${AIRFLOW_ADMIN_PASSWORD:-admin}"
+AIRFLOW_ADMIN_EMAIL="${AIRFLOW_ADMIN_EMAIL:-admin@example.com}"
+
+# Ensure log directory exists with proper permissions
 mkdir -p "$LOG_DIR"
-chown -R airflow: "$LOG_DIR"
+chown -R airflow:0 "$LOG_DIR"
 
-runuser -u airflow -s /bin/bash -c "airflow db migrate"
+# Initialize database as airflow user
+echo "Initializing Airflow database..."
+gosu airflow airflow db migrate
 
-if ! runuser -u airflow -s /bin/bash -c "airflow users list" | grep -q "${AIRFLOW_ADMIN_USER:-admin}"; then
-  runuser -u airflow -s /bin/bash -c "airflow users create \
+# Create admin user if it doesn't exist
+echo "Checking for admin user..."
+if ! gosu airflow airflow users list | grep -q "$AIRFLOW_ADMIN_USER"; then
+  echo "Creating admin user: $AIRFLOW_ADMIN_USER"
+  gosu airflow airflow users create \
     --role Admin \
-    --username '${AIRFLOW_ADMIN_USER:-admin}' \
-    --password '${AIRFLOW_ADMIN_PASSWORD:-admin}' \
-    --email '${AIRFLOW_ADMIN_EMAIL:-admin@example.com}' \
-    --firstname Admin --lastname User"
+    --username "$AIRFLOW_ADMIN_USER" \
+    --password "$AIRFLOW_ADMIN_PASSWORD" \
+    --email "$AIRFLOW_ADMIN_EMAIL" \
+    --firstname Admin \
+    --lastname User
+else
+  echo "Admin user already exists"
 fi
 
-runuser -u airflow -s /bin/bash -c "airflow scheduler &"
-exec runuser -u airflow -s /bin/bash -c "airflow webserver --port '${PORT:-8080}' --hostname 0.0.0.0"
+# Start scheduler in background
+echo "Starting Airflow scheduler..."
+gosu airflow airflow scheduler &
+
+# Start webserver in foreground
+echo "Starting Airflow webserver on port $PORT..."
+exec gosu airflow airflow webserver --port "$PORT" --hostname 0.0.0.0
