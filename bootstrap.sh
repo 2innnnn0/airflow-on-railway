@@ -42,4 +42,4 @@ gosu airflow airflow scheduler &
 
 # Start api-server in foreground (replaces webserver in Airflow 3.1+)
 echo "Starting Airflow api-server on port $PORT..."
-exec gosu airflow airflow api-server --port "$PORT" --hostname 0.0.0.0
+exec gosu airflow airflow api-server --port "$PORT"
