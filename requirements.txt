@@ -1,5 +1,7 @@
 # Core dependencies for Airflow 3.1 FAB auth manager
-flask-appbuilder>=4.3.0
+# Use compatible flask-appbuilder version with SQLA support
+flask-appbuilder==4.5.0
+flask-sqlalchemy>=3.0.0,<4.0.0
 connexion[flask]>=3.0.0,<4.0.0
 
 # Airflow 3.1 requires FAB auth provider
