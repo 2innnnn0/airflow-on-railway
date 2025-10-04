@@ -1,11 +1,10 @@
-# Airflow 3.x
 FROM apache/airflow:3.1.0-python3.13
 
 USER root
-RUN apt-get update && apt-get install -y --no-install-recommends su && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends util-linux \
+ && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /opt/airflow/dags /opt/airflow/logs /opt/airflow/plugins
 
-# FAB Auth CLI 사용을 위해 프로바이더 설치
 COPY requirements.txt /requirements.txt
 RUN pip install --no-cache-dir -r /requirements.txt
 

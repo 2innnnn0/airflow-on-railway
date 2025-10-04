@@ -7,19 +7,16 @@ LOG_DIR="${AIRFLOW_HOME}/logs"
 mkdir -p "$LOG_DIR"
 chown -R airflow: "$LOG_DIR"
 
-# DB 마이그레이션
-su -s /bin/bash -c "airflow db migrate" airflow
+runuser -u airflow -s /bin/bash -c "airflow db migrate"
 
-# Admin 계정 생성(FAB Auth 전제)
-if ! su -s /bin/bash -c "airflow users list" airflow | grep -q "${AIRFLOW_ADMIN_USER:-admin}"; then
-  su -s /bin/bash -c "airflow users create \
+if ! runuser -u airflow -s /bin/bash -c "airflow users list" | grep -q "${AIRFLOW_ADMIN_USER:-admin}"; then
+  runuser -u airflow -s /bin/bash -c "airflow users create \
     --role Admin \
     --username '${AIRFLOW_ADMIN_USER:-admin}' \
     --password '${AIRFLOW_ADMIN_PASSWORD:-admin}' \
     --email '${AIRFLOW_ADMIN_EMAIL:-admin@example.com}' \
-    --firstname Admin --lastname User" airflow
+    --firstname Admin --lastname User"
 fi
 
-# 스케줄러 + 웹서버
-su -s /bin/bash -c "airflow scheduler &" airflow
-exec su -s /bin/bash -c "airflow webserver --port '${PORT:-8080}' --hostname 0.0.0.0" airflow
+runuser -u airflow -s /bin/bash -c "airflow scheduler &"
+exec runuser -u airflow -s /bin/bash -c "airflow webserver --port '${PORT:-8080}' --hostname 0.0.0.0"
