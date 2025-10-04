@@ -1,8 +1,9 @@
+# Core dependencies for Airflow 3.1 FAB auth manager
+flask-appbuilder>=4.3.0
+connexion[flask]>=3.0.0,<4.0.0
+
 # Airflow 3.1 requires FAB auth provider
 apache-airflow-providers-fab
-
-# Connexion is required by FAB auth manager in Airflow 3.1
-connexion[flask]>=3.0.0,<4.0.0
 
 # PostgreSQL provider (required for Railway PostgreSQL)
 apache-airflow-providers-postgres
