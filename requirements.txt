@@ -1,10 +1,5 @@
-# Core dependencies for Airflow 3.1 FAB auth manager
-# flask-appbuilder 4.5.0 will install its required flask-sqlalchemy version
-flask-appbuilder==4.5.0
-flask-session>=0.5.0
-connexion[flask]>=3.0.0,<4.0.0
-
 # Airflow 3.1 requires FAB auth provider
+# apache-airflow-providers-fab will install all required dependencies automatically
 apache-airflow-providers-fab
 
 # PostgreSQL provider (required for Railway PostgreSQL)
