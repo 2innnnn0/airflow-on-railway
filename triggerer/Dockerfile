@@ -18,9 +18,8 @@ RUN mkdir -p /opt/airflow/dags /opt/airflow/logs /opt/airflow/plugins \
 # RUN pip install --no-cache-dir -r /requirements.txt
 
 # Copy DAGs and plugins (via symlink in this directory)
-COPY dags/ /opt/airflow/dags/
-COPY plugins/ /opt/airflow/plugins/
-RUN chown -R airflow:0 /opt/airflow/dags /opt/airflow/plugins
+COPY --chown=airflow:0 dags /opt/airflow/dags
+COPY --chown=airflow:0 plugins /opt/airflow/plugins
 
 # Copy entrypoint script
 USER root
