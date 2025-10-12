@@ -19,7 +19,7 @@ RUN mkdir -p /opt/airflow/dags /opt/airflow/logs /opt/airflow/plugins \
 
 # Copy entrypoint script
 USER root
-COPY entrypoint.sh /entrypoint.sh
+COPY init/entrypoint.sh /entrypoint.sh
 RUN chmod 755 /entrypoint.sh
 
 USER airflow
