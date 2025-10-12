@@ -1,16 +1,48 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
 
-# Airflow 3.1 compatible DAG
+default_args = {
+    'owner': 'airflow',
+    'depends_on_past': False,
+    'start_date': datetime(2024, 1, 1),
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5),
+}
+
+def print_hello():
+    print("Hello from Airflow on Railway!")
+    return "Hello World"
+
+def print_date():
+    print(f"Current date: {datetime.now()}")
+    return datetime.now()
+
 with DAG(
-    dag_id="example_railway_hello",
-    start_date=datetime(2024, 1, 1),
-    schedule="@daily",  # Updated from schedule_interval to schedule
+    'example_railway_dag',
+    default_args=default_args,
+    description='Example DAG for Railway deployment',
+    schedule_interval=timedelta(days=1),
     catchup=False,
-    tags=["railway", "example"],
+    tags=['example', 'railway'],
 ) as dag:
-    hello = BashOperator(
-        task_id="echo_hello",
-        bash_command="echo 'Hello from Airflow 3.1 on Railway'"
+
+    t1 = BashOperator(
+        task_id='print_date_bash',
+        bash_command='date',
     )
+
+    t2 = PythonOperator(
+        task_id='print_hello',
+        python_callable=print_hello,
+    )
+
+    t3 = PythonOperator(
+        task_id='print_current_date',
+        python_callable=print_date,
+    )
+
+    t1 >> [t2, t3]

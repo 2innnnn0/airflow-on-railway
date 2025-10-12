@@ -25,3 +25,28 @@ AIRFLOW_ADMIN_EMAIL=<you@example.com>
 - Logs persist via Railway Volume at `/opt/airflow/logs`
 - Put your DAGs in `dags/`
 - If you need providers, add them to `requirements.txt` and uncomment in `Dockerfile`
+
+
+# Apache Airflow Railway Repository Structure
+
+```
+airflow-railway/
+├── webserver/
+│   └── Dockerfile
+├── scheduler/
+│   └── Dockerfile
+├── worker/
+│   └── Dockerfile
+├── triggerer/
+│   └── Dockerfile
+├── init/
+│   └── Dockerfile
+├── dags/
+│   ├── example_dag.py
+│   └── .gitkeep
+├── plugins/
+│   └── .gitkeep
+├── .env.example
+├── .gitignore
+└── README.md
+```
