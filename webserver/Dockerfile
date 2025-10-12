@@ -23,7 +23,7 @@ COPY --chown=airflow:0 plugins /opt/airflow/plugins
 
 # Copy entrypoint script
 USER root
-COPY webserver/entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 RUN chmod 755 /entrypoint.sh
 
 USER airflow
