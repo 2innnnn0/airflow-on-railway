@@ -19,8 +19,8 @@ RUN mkdir -p /opt/airflow/dags /opt/airflow/logs /opt/airflow/plugins \
 
 # Copy DAGs and plugins
 COPY dags/ /opt/airflow/dags/
-COPY plugins/ /opt/airflow/plugins/
-RUN chown -R airflow:0 /opt/airflow/dags /opt/airflow/plugins
+# COPY plugins/ /opt/airflow/plugins/
+RUN chown -R airflow:0 /opt/airflow/dags
 
 # Copy entrypoint script
 USER root
