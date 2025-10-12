@@ -1,10 +1,10 @@
 # 추가 Python 패키지가 필요한 경우 여기에 추가
 # 예시:
-# pandas==2.1.0
-# requests==2.31.0
-# boto3==1.28.0
+pandas==2.1.0
+requests==2.31.0
+boto3==1.28.0
 
 # Airflow Providers (필요한 경우)
-# apache-airflow-providers-amazon==8.0.0
-# apache-airflow-providers-google==10.0.0
-# apache-airflow-providers-slack==8.0.0
+apache-airflow-providers-amazon==8.0.0
+apache-airflow-providers-google==10.0.0
+apache-airflow-providers-slack==8.0.0

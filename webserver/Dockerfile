@@ -13,7 +13,7 @@ RUN mkdir -p /opt/airflow/dags /opt/airflow/logs /opt/airflow/plugins \
     && chown -R airflow:0 /opt/airflow
 
 # Install Python dependencies as airflow user
-COPY ../requirements.txt /requirements.txt
+COPY requirements.txt /requirements.txt
 USER airflow
 RUN pip install --no-cache-dir -r /requirements.txt
 
