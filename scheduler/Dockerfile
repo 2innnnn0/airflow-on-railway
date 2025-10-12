@@ -17,9 +17,14 @@ RUN mkdir -p /opt/airflow/dags /opt/airflow/logs /opt/airflow/plugins \
 # USER airflow
 # RUN pip install --no-cache-dir -r /requirements.txt
 
+# Copy DAGs and plugins
+COPY dags/ /opt/airflow/dags/
+COPY plugins/ /opt/airflow/plugins/
+RUN chown -R airflow:0 /opt/airflow/dags /opt/airflow/plugins
+
 # Copy entrypoint script
 USER root
-COPY entrypoint.sh /entrypoint.sh
+COPY scheduler/entrypoint.sh /entrypoint.sh
 RUN chmod 755 /entrypoint.sh
 
 USER airflow
