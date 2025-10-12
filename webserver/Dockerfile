@@ -18,7 +18,7 @@ RUN mkdir -p /opt/airflow/dags /opt/airflow/logs /opt/airflow/plugins \
 # RUN pip install --no-cache-dir -r /requirements.txt
 
 # Copy DAGs and plugins from project root
-# COPY --chown=airflow:0 dags /opt/airflow/dags
+COPY --chown=airflow:0 dags /opt/airflow/dags
 # COPY --chown=airflow:0 plugins /opt/airflow/plugins
 
 # Copy entrypoint script
